@@ -15,3 +15,35 @@ docker run -it \
 ## python env for python tools installed
 source /opt/ctfenv/bin/activate
 
+## Tools installed
+- Feroxbuster
+- Gobuster
+- Amass
+- Subfinder
+- Eyewitness
+- massDns
+- assetfinder
+- httprobe
+- waybackurls
+- ffuf
+- masScan
+- Radare2
+- Metasploit
+- Wireshark
+- Netdiscover
+- Nikto
+- WPScan
+- Crackmapexec
+- SQLmap
+- Powershell (pwsh)
+- Kerbrute
+- Impacket
+- Evil-WinRM
+- Hashcat
+- John
+- hydra
+- pypykatz
+- Chisel
+- Python env
+  - pwntools
+  - ropper etc.

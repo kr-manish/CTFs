@@ -26,7 +26,9 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Zsteg (Ruby gem)
 RUN gem install zsteg
-
+RUN apt-get install -y gobuster nikto hydra file ltrace strace libc6 netdiscover openvpn iproute2 iputils-ping \
+    ruby-dev build-essential nbtscan smbmap smbclient enum4linux samba-client pure-ftpd \ 
+    ldap-utils python3-impacket && gem install wpscan && gem install evil-winrm
 
 RUN set -e && \
   mkdir targets && \
@@ -35,7 +37,7 @@ RUN set -e && \
 
 RUN python3 -m venv /opt/ctfenv && \
     /opt/ctfenv/bin/pip install --upgrade pip && \
-    /opt/ctfenv/bin/pip install pwntools ropper one_gadget requests flask beautifulsoup4 scrapy ipython
+    /opt/ctfenv/bin/pip install pwntools pypykatz ropper one_gadget requests flask beautifulsoup4 scrapy ipython hashid
 
 # RUN cd tools
 WORKDIR /tools
@@ -44,7 +46,7 @@ WORKDIR /tools
 RUN curl -sLO https://github.com/epi052/feroxbuster/releases/latest/download/feroxbuster_amd64.deb.zip
 RUN unzip feroxbuster_amd64.deb.zip
 RUN apt install ./feroxbuster_*_amd64.deb
-RUN rm feroxbuster_amd64.deb.zip feroxbuster_*_amd64.deb 
+RUN rm feroxbuster_amd64.deb.zip feroxbuster_*_amd64.deb
 
 # Installing Seclists
 RUN git clone https://github.com/danielmiessler/SecLists.git
@@ -60,6 +62,9 @@ RUN go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 RUN go install github.com/tomnomnom/assetfinder@latest
 RUN go install github.com/tomnomnom/httprobe@latest
 RUN go install github.com/tomnomnom/waybackurls@latest
+RUN go install github.com/ffuf/ffuf/v2@latest
+RUN go install github.com/ropnop/kerbrute@latest
+RUN go install github.com/jpillora/chisel@latest
 
 # Installing massDns
 RUN git clone https://github.com/blechschmidt/massdns.git  && cd massdns && make
@@ -77,6 +82,34 @@ RUN git clone https://github.com/radareorg/radare2.git --depth 1 && \
 RUN curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && \
   chmod 755 msfinstall && \
   ./msfinstall
+
+# EyeWitness
+RUN git clone https://github.com/RedSiege/EyeWitness.git /tools/eye && \
+    source /opt/ctfenv/bin/activate && /tools/eye/Python/setup/setup.sh
+
+# Clone and install CrackMapExec
+RUN git clone --recursive https://github.com/Porchetta-Industries/CrackMapExec.git /tools/CrackMapExec && \
+    cd /tools/CrackMapExec && /opt/ctfenv/bin/pip install .
+
+# SQLmap
+RUN git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git /tools/sqlmap && \
+    ln -s /tools/sqlmap/sqlmap.py /usr/bin/sqlmap
+
+# Install Microsoft dependencies and PowerShell
+RUN apt-get install -y wget apt-transport-https software-properties-common && \
+    wget -q https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y powershell && \
+    rm packages-microsoft-prod.deb
+
+# hashcat
+RUN git clone https://github.com/hashcat/hashcat.git && cd hashcat && make && make install
+
+# John
+RUN git clone https://github.com/magnumripper/JohnTheRipper.git /tools/john && \
+    cd /tools/john/src && ./configure && make -s clean && make -sj2
+ENV PATH="/tools/john/run:${PATH}"
 
 # Ghidra
 # RUN wget https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_10.4.2_build/ghidra_10.4.2_PUBLIC_20240326.zip && \
