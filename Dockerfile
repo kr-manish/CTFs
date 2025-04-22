@@ -22,13 +22,13 @@ RUN apt-get update && apt-get upgrade -y && \
     wget zip unzip nmap \
     python3-pip python3-dev python3-venv \
     perl gdb \
+    gobuster nikto hydra file ltrace strace libc6 netdiscover openvpn iproute2 iputils-ping \
+    ruby-dev build-essential nbtscan smbmap smbclient enum4linux samba-client pure-ftpd \ 
+    ldap-utils python3-impacket && gem install wpscan && gem install evil-winrm \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Zsteg (Ruby gem)
 RUN gem install zsteg
-RUN apt-get install -y gobuster nikto hydra file ltrace strace libc6 netdiscover openvpn iproute2 iputils-ping \
-    ruby-dev build-essential nbtscan smbmap smbclient enum4linux samba-client pure-ftpd \ 
-    ldap-utils python3-impacket && gem install wpscan && gem install evil-winrm
 
 RUN set -e && \
   mkdir targets && \
@@ -85,7 +85,7 @@ RUN curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/conf
 
 # EyeWitness
 RUN git clone https://github.com/RedSiege/EyeWitness.git /tools/eye && \
-    source /opt/ctfenv/bin/activate && /tools/eye/Python/setup/setup.sh
+    bash -c "source /opt/ctfenv/bin/activate && /tools/eye/Python/setup/setup.sh"
 
 # Clone and install CrackMapExec
 RUN git clone --recursive https://github.com/Porchetta-Industries/CrackMapExec.git /tools/CrackMapExec && \
